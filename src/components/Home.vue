@@ -1,7 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import verImg from '../assets/ver.png'
 import { useRouter } from 'vue-router'
+
+import { Carousel } from 'bootstrap'
 
 const router = useRouter()
 
@@ -18,13 +20,12 @@ const backdrops = ref([])
 const imgPATH = ref('')
 const tieneImagen = ref(false)
 
-const tendencias = ref([])
-const populares = ref([])
-const peliculasGratis = ref([])
-const series = ref([])
+const cine = ref([])
 
 const logout = ref(false)
 const estaLogeado = ref(false)
+
+const peliculasCarrusel = ref([])
 
 function goToHome() {
   window.location.href = '/'
@@ -43,46 +44,18 @@ function verificarSesion() {
   estaLogeado.value = sessionId !== null
 }
 
-async function obtenerTendencias() {
-  const url = `https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}&language=es-ES&page=1`
-  const response = await fetch(url)
-  const data = await response.json()
-  tendencias.value = data.results || []
-}
-
-async function obtenerPopulares() {
-  const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=es-ES&page=1`
-  const response = await fetch(url)
-  const data = await response.json()
-  populares.value = data.results || []
-}
-
-async function obtenerSeries() {
-  const url = `https://api.themoviedb.org/3/tv/popular?api_key=${apiKey}&language=es-ES&page=1`
-  const response = await fetch(url)
-  const data = await response.json()
-  series.value = data.results || []
-}
-
-async function obtenerPeliculasGratis() {
-  const url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=es-ES&watch_region=US&with_watch_monetization_types=free`
-  const response = await fetch(url)
-  const data = await response.json()
-  peliculasGratis.value = data.results || []
-}
-
-async function obtenerTopPeliculas() {
-  const url = `https://api.themoviedb.org/3/movie/top_rated?api_key=${apiKey}&language=es-ES&page=1`
+async function obtenerCine() {
+  const url = `https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=es-ES&page=1&region=MX`
   const response = await fetch(url)
   const data = await response.json()
 
-  if (data.results?.length > 0) {
-    topPeliculas.value = data.results.slice(0, 3)
+  cine.value = data.results || []
 
-    backdrops.value = topPeliculas.value
-      .filter(pelicula => pelicula.backdrop_path)
-      .map(pelicula => `https://image.tmdb.org/t/p/w1280${pelicula.backdrop_path}`)
-  }
+  peliculasCarrusel.value = cine.value
+    .filter(pelicula => pelicula.backdrop_path)
+    .slice(0, 5)
+
+  console.log('carrusel:', peliculasCarrusel.value.length)
 }
 
 async function obtenerPerfilUsuario() {
@@ -100,7 +73,27 @@ async function obtenerPerfilUsuario() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  verificarSesion()
+  await obtenerCine()
+  await obtenerPerfilUsuario()
+
+  await nextTick()
+
+  const carouselElement = document.getElementById('carouselExampleSlidesOnly')
+
+  if (carouselElement) {
+    const carousel = new Carousel(carouselElement, {
+      interval: 6000,
+      ride: 'carousel',
+      pause: false,
+      wrap: true,
+      touch: true
+    })
+
+    carousel.cycle()
+  }
+
   const navbar = document.querySelector('.contenedor-navbar')
 
   window.addEventListener('scroll', () => {
@@ -110,14 +103,6 @@ onMounted(() => {
       navbar.classList.remove('scroll')
     }
   })
-
-  verificarSesion()
-  obtenerTopPeliculas()
-  obtenerTendencias()
-  obtenerPerfilUsuario()
-  obtenerPopulares()
-  obtenerSeries()
-  obtenerPeliculasGratis()
 })
 </script>
 
@@ -157,25 +142,53 @@ onMounted(() => {
 
       <!-- Banner -->
       <div class="banner-cont">
-        <div v-if="backdrops.length > 0" class="banner">
-          <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+
+        <div v-if="peliculasCarrusel.length > 0" class="banner">
+          <div
+            id="carouselExampleSlidesOnly"
+            class="carousel slide"
+            data-bs-ride="carousel"
+            data-bs-interval="2000"
+          >
             <div class="carousel-inner">
               <div
-                v-for="(backdrop, index) in backdrops"
-                :key="index"
+                v-for="(pelicula, index) in peliculasCarrusel"
+                :key="pelicula.id"
                 class="carousel-item"
                 :class="{ active: index === 0 }"
               >
-                <img :src="backdrop" class="d-block w-100" alt="Imagen de la película">
+                <img
+                  :src="`https://image.tmdb.org/t/p/w1280${pelicula.backdrop_path}`"
+                  class="d-block w-100"
+                  alt="Imagen de la película"
+                >
 
-                <div class="overlay" v-if="topPeliculas.length > index">
+                <div class="overlay">
                   <div class="banner-titulo">
-                    <p class="fw-bold">{{ topPeliculas[index].original_title }}</p>
-                    <p class="fs-6">{{ topPeliculas[index].overview }}</p>
+                    <p class="fw-bold">{{ pelicula.original_title }}</p>
+                    <p class="fs-6">{{ pelicula.overview }}</p>
                   </div>
                 </div>
               </div>
             </div>
+
+            <!-- <button
+              class="carousel-control-prev"
+              type="button"
+              data-bs-target="#carouselExampleSlidesOnly"
+              data-bs-slide="prev"
+            >
+              <span class="carousel-control-prev-icon"></span>
+            </button>
+
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#carouselExampleSlidesOnly"
+              data-bs-slide="next"
+            >
+              <span class="carousel-control-next-icon"></span>
+            </button> -->
           </div>
         </div>
 
@@ -190,62 +203,18 @@ onMounted(() => {
 
       <!-- Categorías -->
       <div class="categorias">
-        <div class="categoria">
-          <p class="fw-medium">Tendencias</p>
-
-          <div class="contenido-categoria" v-if="tendencias.length > 0">
-            <div
-              v-for="tendencia in tendencias"
-              :key="tendencia.id"
-              class="card"
-              @click="showMediaDetails(tendencia)"
-            >
-              <img :src="`https://image.tmdb.org/t/p/w500${tendencia.poster_path}`" alt="Poster" class="card-img-top">
-            </div>
-          </div>
-        </div>
 
         <div class="categoria">
-          <p class="fw-medium">Lo más popular</p>
+          <p class="h3">Cartelera</p>
 
-          <div class="contenido-categoria" v-if="populares.length > 0">
+          <div class="contenido-categoria" v-if="cine.length > 0">
             <div
-              v-for="popular in populares"
-              :key="popular.id"
+              v-for="peliculaCine in cine"
+              :key="peliculaCine.id"
               class="card"
-              @click="showMediaDetails(popular)"
+              @click="showMediaDetails(peliculaCine)"
             >
-              <img :src="`https://image.tmdb.org/t/p/w500${popular.poster_path}`" alt="Poster" class="card-img-top">
-            </div>
-          </div>
-        </div>
-
-        <div class="categoria">
-          <p class="fw-medium">Ver gratis</p>
-
-          <div class="contenido-categoria" v-if="peliculasGratis.length > 0">
-            <div
-              v-for="peliculaGratis in peliculasGratis"
-              :key="peliculaGratis.id"
-              class="card"
-              @click="showMediaDetails(peliculaGratis)"
-            >
-              <img :src="`https://image.tmdb.org/t/p/w500${peliculaGratis.poster_path}`" alt="Poster" class="card-img-top">
-            </div>
-          </div>
-        </div>
-
-        <div class="categoria">
-          <p class="fw-medium">Series</p>
-
-          <div class="contenido-categoria" v-if="series.length > 0">
-            <div
-              v-for="serie in series"
-              :key="serie.id"
-              class="card"
-              @click="showMediaDetails(serie)"
-            >
-              <img :src="`https://image.tmdb.org/t/p/w500${serie.poster_path}`" alt="Poster" class="card-img-top">
+              <img :src="`https://image.tmdb.org/t/p/w500${peliculaCine.poster_path}`" alt="Poster" class="card-img-top">
             </div>
           </div>
         </div>
@@ -259,6 +228,7 @@ onMounted(() => {
           <p class="fs-6">Contáctanos</p>
           <p class="fs-6">Ayuda</p>
           <p class="fs-6">Redes</p>
+          <p class="fs-6">Hecho por Ivan Rios</p>
         </div>
       </div>
     </footer>
