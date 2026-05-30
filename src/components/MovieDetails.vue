@@ -1,7 +1,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import verImg from '../assets/ver.png'
 import likeImg from '../assets/como.png'
+
+import Navbar from './Navar.vue'
+import FooterPag from './FooterPag.vue'
+
 
 const apiKey = '0a5fdb3d67479033813279d6d5550f58'
 const sessionId = localStorage.getItem('sessionId')
@@ -28,10 +31,6 @@ const fecha = computed(() => {
     ? new Date(movie.value.first_air_date).getFullYear()
     : new Date(movie.value.release_date).getFullYear()
 })
-
-function goToHome() {
-  window.location.href = '/'
-}
 
 function mediaType() {
   return movie.value?.name == null ? 'movie' : 'tv'
@@ -232,24 +231,8 @@ onMounted(async () => {
 <template>
   <div>
     <div class="contenedor-principal">
-      <div class="contenedor-navbar">
-        <div class="contenedor-nombre-navbar">
-          <p @click="goToHome" class="fw-bold">r i s k l e i s.</p>
-        </div>
 
-        <div class="opciones-navbar">
-          <p @click="goToHome" class="fs-6" id="inicio">Inicio</p>
-          <p class="fs-6">Series</p>
-          <p class="fs-6">Películas</p>
-          <p class="fs-6">Novedades</p>
-        </div>
-
-        <div class="perfil-navbar">
-          <img v-if="tieneImagen" :src="imgPATH" alt="img" class="foto-perfil">
-          <div v-else class="contenedor-foto-perfil"></div>
-          <img :src="verImg" alt="ver" class="ver">
-        </div>
-      </div>
+      <Navbar />
 
       <div class="banner-cont">
         <div class="banner">
@@ -372,15 +355,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <footer id="pie">
-      <div style="margin-top: 16px">
-        <div class="contenidoUno">
-          <p class="fs-3">r i s k l e i s</p>
-          <p class="fs-6">Contáctanos</p>
-          <p class="fs-6">Ayuda</p>
-          <p class="fs-6">Redes</p>
-        </div>
-      </div>
-    </footer>
+    <FooterPag />
+
   </div>
 </template>

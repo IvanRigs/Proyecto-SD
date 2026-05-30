@@ -70,109 +70,6 @@ html, body {
     position: relative;
 }
 
-/* navbar pagina principal*/
-.contenedor-navbar {
-
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    display: flex;
-    width: 100%;
-    height: 8vh;
-    color: #fff;
-
-    z-index: 9999;
-
-    .fw-bold{
-        font-size: 32px;
-        margin-bottom: 0;
-        cursor: pointer;
-    }
-
-    background-color: transparent;
-    transition: background-color 0.3s ease-in-out;
-}
-
-.contenedor-nombre-navbar {
-    display: flex;
-    width: 40%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-}
-
-.opciones-navbar {
-    display: flex;
-    width: 40%;
-    height: 100%;
-    align-items: center;
-
-    .fs-6{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-left: 32px;
-        /*cursor: pointer;*/
-        margin-bottom: 0;
-    }
-
-    .fs-5{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-left: 32px;
-        /*cursor: pointer;*/
-        margin-bottom: 0;
-    }
-
-    .fw-bold{
-        font-size: 1rem;
-        cursor: pointer;
-        margin-bottom: 0;
-    }
-
-    #inicio {
-        cursor: pointer;
-    }
-}
-
-.perfil-navbar{
-    display: flex;
-    justify-content: right;
-    margin-right: 40px;
-    width: 30%;
-    height: 100%;
-    align-items: center;
-
-    .contenedor-foto-perfil{
-        width: 40px;
-        height: 40px;
-        border-radius: 25%;
-        background-color: white;
-        cursor: pointer;
-    }
-    .foto-perfil{
-        width: 40px;
-        border-radius: 25%;
-        height: auto;
-        cursor: pointer;
-    }
-}
-
-.contenedor-navbar.scroll {
-    background-color: rgba(32, 32, 32);
-}
-
-.ver{
-    margin-left: 10px;
-    width: 16px;
-    height: auto;
-    cursor: pointer;
-}
-
 /* CATEGORIAS */
 .categorias{
     display: flex;
@@ -203,25 +100,25 @@ html, body {
         display: flex;
         overflow-x: auto;
         white-space: nowrap;
-        padding-top: 15px;
-        padding-bottom: 15px;
-        padding-left: 10px;
+        padding-top: 20px;
+        padding-bottom: 20;
+        padding-left: 20px;
         border: none;
     }
 
     /* Cartas */
     .card {
         border: none;
-        width: 10rem;
-        margin: 5px;
+        width: 15rem;
+        margin: 10px;
         cursor: pointer;
         flex-shrink: 0;
         transition: transform 0.2s;
     }
     .card:hover {
         z-index: 99;
-        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.8);
-        transform: scale(1.13);
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+        transform: scale(1.03);
     }
 
     .card-img-top {

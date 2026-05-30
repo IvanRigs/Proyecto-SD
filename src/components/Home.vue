@@ -1,9 +1,11 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
-import verImg from '../assets/ver.png'
 import { useRouter } from 'vue-router'
 
 import { Carousel } from 'bootstrap'
+
+import Navbar from './Navar.vue'
+import FooterPag from './FooterPag.vue'
 
 const router = useRouter()
 
@@ -26,10 +28,6 @@ const logout = ref(false)
 const estaLogeado = ref(false)
 
 const peliculasCarrusel = ref([])
-
-function goToHome() {
-  window.location.href = '/'
-}
 
 function mostrarBotonCerrar() {
   logout.value = !logout.value
@@ -110,35 +108,7 @@ onMounted(async () => {
   <div>
     <div class="contenedor-principal">
       <!-- Navbar -->
-      <div class="contenedor-navbar">
-        <div class="contenedor-nombre-navbar">
-          <p @click="goToHome" class="fw-bold">r i s k l e i s.</p>
-        </div>
-
-        <div class="opciones-navbar">
-          <p @click="goToHome" class="fw-bold">Inicio</p>
-          <p class="fs-6">Series</p>
-          <p class="fs-6">Películas</p>
-          <p class="fs-6">Novedades</p>
-        </div>
-
-        <div class="perfil-navbar">
-          <img v-if="tieneImagen" :src="imgPATH" alt="img" class="foto-perfil">
-          <div v-else class="contenedor-foto-perfil"></div>
-
-          <img @click="mostrarBotonCerrar" :src="verImg" alt="ver" class="ver">
-
-          <div v-if="logout">
-            <button v-if="estaLogeado" @click="cerrarSession" class="btn btn-secondary">
-              Cerrar sesión
-            </button>
-
-            <a v-else href="#" class="btn btn-secondary">
-              Iniciar sesión
-            </a>
-          </div>
-        </div>
-      </div>
+      <Navbar />
 
       <!-- Banner -->
       <div class="banner-cont">
@@ -221,16 +191,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <footer id="pie">
-      <div style="margin-top: 16px">
-        <div class="contenidoUno">
-          <p class="fs-3">r i s k l e i s</p>
-          <p class="fs-6">Contáctanos</p>
-          <p class="fs-6">Ayuda</p>
-          <p class="fs-6">Redes</p>
-          <p class="fs-6">Hecho por Ivan Rios</p>
-        </div>
-      </div>
-    </footer>
+    <FooterPag />
+
   </div>
 </template>
