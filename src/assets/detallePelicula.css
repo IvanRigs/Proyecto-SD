@@ -94,6 +94,19 @@ html, body {
         background-color: rgba(32, 32, 32, 0.7);
     }
 
+    .btn-reservar{
+        background-color: rgb(205, 129, 17);
+        border: none;
+        width: 40%;
+        height: 50px;
+        margin-left: 10px;
+        color: white;
+    }
+
+    .btn-reservar:hover{
+        background-color: rgb(151, 94, 13);
+    }
+
 }
 
 .d-block {

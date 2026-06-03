@@ -54,6 +54,12 @@ function goToActor(actorId) {
   console.log('Ir a actor:', actorId)
 }
 
+function goToReservation() {
+  localStorage.setItem('movieId', movie.value.id)
+  localStorage.setItem('movieTitle', movie.value.original_title || movie.value.name)
+  window.location.href = '/reservation'
+}
+
 async function obtenerPlataformas() {
   if (!movie.value?.id) return
 
@@ -280,9 +286,15 @@ onMounted(async () => {
               <p class="fs-6">{{ movie.overview }}</p>
 
               <div class="mb-3">
+
                 <button @click="obtenerTrailer" class="btn btn-primary">
                   Ver trailer
                 </button>
+
+                <button @click="goToReservation" class="btn btn-reservar">
+                  Reservar asiento
+                </button>
+
               </div>
 
               <div v-if="plataformas.length > 0" class="plataformas">
