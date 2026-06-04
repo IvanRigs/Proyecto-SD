@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+reservaciones-backend/reservaciones.db
+reservaciones-backend/venv/
