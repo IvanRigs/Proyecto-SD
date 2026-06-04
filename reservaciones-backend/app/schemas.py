@@ -22,8 +22,12 @@ class ShowtimeResponse(ShowtimeBase):
 
 
 class SeatBase(BaseModel):
-    row: str
-    number: int
+    room: str
+    row_label: str
+    seat_number: int
+    x_position: int
+    y_position: int
+    seat_type: str = "normal"
 
 
 class SeatCreate(SeatBase):
@@ -56,6 +60,10 @@ class ReservationResponse(BaseModel):
 
 class SeatAvailabilityResponse(BaseModel):
     id: int
-    row: str
-    number: int
+    room: str
+    row_label: str
+    seat_number: int
+    x_position: int
+    y_position: int
+    seat_type: str
     reserved: bool

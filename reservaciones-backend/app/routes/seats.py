@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from app.database import get_db
 from app import models, schemas
@@ -15,22 +16,18 @@ def create_seat(
     seat: schemas.SeatCreate,
     db: Session = Depends(get_db)
 ):
-    existing_seat = db.query(models.Seat).filter(
-        models.Seat.row == seat.row,
-        models.Seat.number == seat.number
-    ).first()
-
-    if existing_seat:
-        raise HTTPException(
-            status_code=409,
-            detail="Ese asiento ya existe"
-        )
-
     new_seat = models.Seat(**seat.model_dump())
 
-    db.add(new_seat)
-    db.commit()
-    db.refresh(new_seat)
+    try:
+        db.add(new_seat)
+        db.commit()
+        db.refresh(new_seat)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="Ya existe un asiento con esa etiqueta o posición en esa sala"
+        )
 
     return new_seat
 
@@ -38,8 +35,24 @@ def create_seat(
 @router.get("/", response_model=list[schemas.SeatResponse])
 def get_seats(db: Session = Depends(get_db)):
     seats = db.query(models.Seat).order_by(
-        models.Seat.row,
-        models.Seat.number
+        models.Seat.room,
+        models.Seat.y_position,
+        models.Seat.x_position
+    ).all()
+
+    return seats
+
+
+@router.get("/room/{room}", response_model=list[schemas.SeatResponse])
+def get_seats_by_room(
+    room: str,
+    db: Session = Depends(get_db)
+):
+    seats = db.query(models.Seat).filter(
+        models.Seat.room == room
+    ).order_by(
+        models.Seat.y_position,
+        models.Seat.x_position
     ).all()
 
     return seats

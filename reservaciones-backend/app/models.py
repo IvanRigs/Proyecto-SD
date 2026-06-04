@@ -26,11 +26,43 @@ class Seat(Base):
     __tablename__ = "seats"
 
     id = Column(Integer, primary_key=True, index=True)
-    row = Column(String, nullable=False)
-    number = Column(Integer, nullable=False)
 
+    room = Column(String, nullable=False)
+
+    row_label = Column(String, nullable=False)
+    seat_number = Column(Integer, nullable=False)
+
+    x_position = Column(Integer, nullable=False)
+    y_position = Column(Integer, nullable=False)
+
+    seat_type = Column(String, default="normal")
+    
     __table_args__ = (
-        UniqueConstraint("row", "number", name="unique_seat_row_number"),
+
+        UniqueConstraint(
+
+            "room",
+
+            "row_label",
+
+            "seat_number",
+
+            name="unique_seat_label_per_room"
+
+        ),
+
+        UniqueConstraint(
+
+            "room",
+
+            "x_position",
+
+            "y_position",
+
+            name="unique_seat_position_per_room"
+
+        ),
+
     )
 
 

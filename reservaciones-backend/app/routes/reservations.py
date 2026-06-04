@@ -140,9 +140,11 @@ def get_seats_availability(
             detail="La función no existe"
         )
 
-    seats = db.query(models.Seat).order_by(
-        models.Seat.row,
-        models.Seat.number
+    seats = db.query(models.Seat).filter(
+        models.Seat.room == showtime.room
+    ).order_by(
+        models.Seat.y_position,
+        models.Seat.x_position
     ).all()
 
     active_reservations = db.query(models.Reservation).filter(
@@ -157,8 +159,12 @@ def get_seats_availability(
     for seat in seats:
         result.append({
             "id": seat.id,
-            "row": seat.row,
-            "number": seat.number,
+            "room": seat.room,
+            "row_label": seat.row_label,
+            "seat_number": seat.seat_number,
+            "x_position": seat.x_position,
+            "y_position": seat.y_position,
+            "seat_type": seat.seat_type,
             "reserved": seat.id in reserved_seat_ids
         })
 
